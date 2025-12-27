@@ -6,7 +6,7 @@ const app = express();
 app.use(express.json());
 
 // ===== THIRD-PARTY API KEY =====
-const PROVIDER_API_KEY = process.env.PROVIDER_API_KEY;
+const PROVIDER_API_KEY = process.env.244cf989f5e079e55822b31322509416efe73e6d;
 
 // ===== CREATE ORDER API =====
 app.post("/api/create-order", async (req, res) => {
@@ -21,7 +21,7 @@ app.post("/api/create-order", async (req, res) => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": 244cf989f5e079e55822b31322509416efe73e6d
+        "Authorization": PROVIDER_API_KEY
       },
       body: JSON.stringify({
         service,
@@ -48,3 +48,4 @@ app.post("/api/create-order", async (req, res) => {
 app.listen(5000, () => {
   console.log("Backend running on port 5000");
 });
+
