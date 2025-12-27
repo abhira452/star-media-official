@@ -1,64 +1,50 @@
 const express = require("express");
-const Razorpay = require("razorpay");
-const crypto = require("crypto");
-const cors = require("cors");
+const fetch = require("node-fetch");
+require("dotenv").config();
 
 const app = express();
-app.use(cors());
 app.use(express.json());
 
-const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID,
-  key_secret: process.env.RAZORPAY_KEY_SECRET
-});
+// ===== THIRD-PARTY API KEY =====
+const PROVIDER_API_KEY = process.env.PROVIDER_API_KEY;
 
-app.get("/", (req, res) => {
-  res.send("Backend is running");
-});
+// ===== CREATE ORDER API =====
+app.post("/api/create-order", async (req, res) => {
+  const { service, quantity, username } = req.body;
 
-// ✅ CREATE ORDER (RUPEES → PAISE FIX)
-app.post("/create-order", async (req, res) => {
+  if (!service || !quantity || !username) {
+    return res.status(400).json({ success: false, error: "Missing data" });
+  }
+
   try {
-    const rupees = Number(req.body.amount); // frontend sends rupees
-
-    if (!rupees || rupees <= 0) {
-      return res.status(400).json({ error: "Invalid amount" });
-    }
-
-    const paise = rupees * 100; // 🔥 FINAL FIX
-
-    const order = await razorpay.orders.create({
-      amount: paise,
-      currency: "INR",
-      receipt: "receipt_" + Date.now()
+    const response = await fetch("https://provider-api-url.com/order", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": 244cf989f5e079e55822b31322509416efe73e6d
+      },
+      body: JSON.stringify({
+        service,
+        quantity,
+        link: username
+      })
     });
 
-    res.json(order);
-  } catch (err) {
-    res.status(500).json({ error: "Order creation failed" });
+    const data = await response.json();
+
+    res.json({
+      success: true,
+      providerOrder: data
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: "Third-party order failed"
+    });
   }
 });
 
-app.post("/verify-payment", (req, res) => {
-  const { order_id, payment_id, signature } = req.body;
-
-  const body = order_id + "|" + payment_id;
-  const expectedSignature = crypto
-    .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
-    .update(body)
-    .digest("hex");
-
-  if (expectedSignature === signature) {
-    res.json({ success: true });
-  } else {
-    res.status(400).json({ success: false });
-  }
+app.listen(5000, () => {
+  console.log("Backend running on port 5000");
 });
-
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log("Backend running on port " + PORT);
-});
-
-
-
