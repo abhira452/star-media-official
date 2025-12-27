@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Track Order</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    input {
+      padding: 10px;
+      width: 100%;
+      max-width: 300px;
+    }
+    button {
+      padding: 10px 15px;
+      margin-top: 10px;
+      cursor: pointer;
+    }
+    .result {
+      margin-top: 20px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+
+<body>
+
+<h2>Track Your Order</h2>
+
+<input type="text" id="trackId" placeholder="Enter Order ID">
+<br>
+<button onclick="trackOrder()">Check Status</button>
+
+<div class="result" id="result"></div>
+
+<script>
+function trackOrder() {
+
+  const orderId = document.getElementById("trackId").value.trim();
+  const resultDiv = document.getElementById("result");
+
+  if (!orderId) {
+    resultDiv.innerHTML = "❌ Please enter Order ID";
+    return;
+  }
+
+  // Get saved orders from browser
+  const orders = JSON.parse(localStorage.getItem("orders")) || [];
+
+  // Find matching order
+  const order = orders.find(o => o.orderId === orderId);
+
+  if (!order) {
+    resultDiv.innerHTML = "❌ Order not found";
+    return;
+  }
+
+  // Show order details
+  resultDiv.innerHTML = `
+    <strong>Order Found ✅</strong><br><br>
+    🆔 Order ID: ${order.orderId}<br>
+    📦 Service: ${order.service}<br>
+    💰 Amount: ₹${order.amount}<br>
+    👤 Username: ${order.username}<br>
+    📱 WhatsApp: ${order.whatsapp}<br>
+    ⏳ Status: ${order.status}
+  `;
+}
+</script>
+
+</body>
+</html>

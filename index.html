@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Social Media Boost</title>
+
+  <link rel="stylesheet" href="style.css">
+
+  <style>
+    .page { display: none; }
+    .page.active { display: block; }
+    .card, button { cursor: pointer; }
+  </style>
+</head>
+
+<body>
+
+<div id="app">
+
+  <!-- 🔹 LANDING PAGE -->
+  <div id="landing" class="page active">
+    <h1>Social Media Boost</h1>
+    <p>Select a service</p>
+
+    <div class="options">
+      <div class="card" data-service="followers">
+        <h2>Followers</h2>
+      </div>
+      <div class="card" data-service="likes">
+        <h2>Likes</h2>
+      </div>
+      <div class="card" data-service="views">
+        <h2>Views</h2>
+      </div>
+    </div>
+  </div>
+
+  <!-- 🔹 SELECTION PAGE -->
+  <div id="selection" class="page">
+    <button id="back-btn">⬅ Back</button>
+
+    <h2 id="service-title">Select Service</h2>
+
+    <div id="packages"></div>
+    <!-- 🔍 CHECK EXISTING ORDER -->
+<div class="check-order-box">
+  <h3>Already Ordered?</h3>
+  <input type="text" id="checkOrderId" placeholder="Enter Order ID">
+  <button id="checkOrderBtn">Check Status</button>
+  <p id="checkOrderResult"></p>
+</div>
+
+
+    <div>
+      <input type="number" id="custom-quantity" placeholder="Enter custom quantity">
+      <button id="calculate-btn">Calculate Price</button>
+    </div>
+
+    <!-- ✅ USER DETAILS (CORRECT PLACE) -->
+    <div class="order-details">
+      <input type="text" id="username" placeholder="Instagram Username">
+      <input type="text" id="customerWhatsapp" placeholder="WhatsApp Number">
+    </div>
+
+    <div id="total-price" class="hidden">
+      <p>Total: <span id="price-display">₹0</span></p>
+      <button id="pay-btn">Pay Now</button>
+    </div>
+  </div>
+
+  <!-- 🔹 SUCCESS PAGE -->
+  <div id="success" class="page">
+    <h2>Payment Successful ✅</h2>
+
+    <p>Your Order ID: <strong id="orderIdText"></strong></p>
+
+    <a id="whatsappLink" target="_blank">
+      <button>Send Order on WhatsApp</button>
+    </a>
+
+    <br><br>
+
+    <a href="track.html">Track My Order</a>
+
+    <br><br>
+
+    <button id="home-btn">Back to Home</button>
+  </div>
+
+</div>
+
+<!-- Razorpay -->
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<!-- Main JS -->
+<script src="main.js"></script>
+
+  <!-- 🔹 HELP TOOL -->
+<div id="helpTool">
+  <button id="helpBtn">Help</button>
+
+  <div id="helpOptions">
+    <a href="tel:+918433316066">📞 Call Us</a>
+    <a href="https://wa.me/8433316066" target="_blank">💬 WhatsApp</a>
+    <a href="mailto:abhirai452.in@gmail.com">📧 Email</a>
+  </div>
+</div>
+
+
+</body>
+</html>
+
+

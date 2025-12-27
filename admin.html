@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Panel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+
+    .login-box {
+      max-width: 300px;
+      margin: 100px auto;
+      border: 1px solid #ccc;
+      padding: 20px;
+      border-radius: 8px;
+    }
+
+    input, button, select {
+      width: 100%;
+      padding: 8px;
+      margin-top: 10px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: center;
+    }
+
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- 🔐 LOGIN SCREEN -->
+<div id="loginBox" class="login-box">
+  <h3>Admin Login</h3>
+  <input type="password" id="adminPassword" placeholder="Enter Admin Password">
+  <button onclick="login()">Login</button>
+  <p id="loginError" style="color:red;"></p>
+</div>
+
+<!-- 🔓 ADMIN PANEL -->
+<div id="adminPanel" class="hidden">
+  <h2>Admin Panel – Orders</h2>
+  <button onclick="logout()">Logout</button>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Order ID</th>
+        <th>Service</th>
+        <th>Amount</th>
+        <th>Username</th>
+        <th>Status</th>
+        <th>Update</th>
+      </tr>
+    </thead>
+    <tbody id="ordersTable"></tbody>
+  </table>
+</div>
+
+<script>
+const ADMIN_PASSWORD = "Abhirai@452"; // 🔴 CHANGE THIS PASSWORD
+
+// Auto-login if already logged in
+if (localStorage.getItem("adminLoggedIn") === "true") {
+  showAdminPanel();
+}
+
+function login() {
+  const enteredPassword = document.getElementById("adminPassword").value;
+  const error = document.getElementById("loginError");
+
+  if (enteredPassword === ADMIN_PASSWORD) {
+    localStorage.setItem("adminLoggedIn", "true");
+    showAdminPanel();
+  } else {
+    error.innerText = "Wrong password";
+  }
+}
+
+function logout() {
+  localStorage.removeItem("adminLoggedIn");
+  location.reload();
+}
+
+function showAdminPanel() {
+  document.getElementById("loginBox").classList.add("hidden");
+  document.getElementById("adminPanel").classList.remove("hidden");
+  loadOrders();
+}
+
+function loadOrders() {
+  const orders = JSON.parse(localStorage.getItem("orders")) || [];
+  const table = document.getElementById("ordersTable");
+  table.innerHTML = "";
+
+  if (orders.length === 0) {
+    table.innerHTML = "<tr><td colspan='6'>No orders found</td></tr>";
+    return;
+  }
+
+  orders.forEach((order, index) => {
+    table.innerHTML += `
+      <tr>
+        <td>${order.orderId}</td>
+        <td>${order.service}</td>
+        <td>₹${order.amount}</td>
+        <td>${order.username}</td>
+        <td>
+          <select id="status-${index}">
+            <option ${order.status === "Processing" ? "selected" : ""}>Processing</option>
+            <option ${order.status === "Completed" ? "selected" : ""}>Completed</option>
+            <option ${order.status === "Cancelled" ? "selected" : ""}>Cancelled</option>
+          </select>
+        </td>
+        <td>
+          <button onclick="updateStatus(${index})">Save</button>
+        </td>
+      </tr>
+    `;
+  });
+}
+
+function updateStatus(index) {
+  const orders = JSON.parse(localStorage.getItem("orders")) || [];
+  const newStatus = document.getElementById(`status-${index}`).value;
+  orders[index].status = newStatus;
+  localStorage.setItem("orders", JSON.stringify(orders));
+  alert("Status updated");
+}
+</script>
+
+</body>
+</html>
